@@ -13,5 +13,5 @@
     uri: git@github.com:cwru-robotics/cwru_davinci_control.git
     
 - git:
-    local-name: ros-control
-    uri: git@github.com:ros-controls/ros_control.git
+    local-name: cwru_davinci_kinematics
+    uri: git@github.com:cwru-robotics/cwru_davinci_kinematics.git
