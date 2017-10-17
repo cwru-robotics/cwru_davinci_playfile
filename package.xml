@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+	<name>cwru_davinci_playfile</name>
+	<version>0.0.0</version>
+	<description>Utility functions for the text formats used throughout cwru_davinci_playfile.</description>
+  
+	<!-- One maintainer tag required, multiple allowed, one person per tag -->
+	<maintainer email="tes77@case.edu">Tom Shkurti</maintainer>
+
+	<!-- One license tag required, multiple allowed, one license per tag -->
+	<!-- Commonly used license strings: -->
+	<!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+	<license>GPLv3</license>
+
+	<buildtool_depend>catkin</buildtool_depend>
+	
+	<build_depend>roscpp</build_depend>
+	<build_depend>roslib</build_depend>
+	<build_depend>roslint</build_depend>
+	<build_depend>cwru_davinci_kinematics</build_depend>
+	<build_depend>cwru_davinci_control</build_depend>
+	
+	<run_depend>roscpp</run_depend>
+	<run_depend>roslib</run_depend>
+	<run_depend>roslint</run_depend>
+	<run_depend>cwru_davinci_kinematics</run_depend>
+	<run_depend>cwru_davinci_control</run_depend>
+
+	<export></export>
+</package>
