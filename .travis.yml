@@ -44,7 +44,6 @@
 # Use ubuntu trusty (14.04) with sudo privileges.
 dist: trusty
 sudo: required
-group: deprecated-2017Q2
 language:
   - generic
 cache:
@@ -116,4 +115,4 @@ script:
   - catkin_make $( [ -f $CATKIN_OPTIONS ] && cat $CATKIN_OPTIONS )
   # Run the tests, ensuring the path is set correctly.
   - source devel/setup.bash
-  - catkin_make run_tests && catkin_make test
+  - catkin_make run_tests_cwru_davinci_playfile && catkin_make  test --pkg cwru_davinci_playfile
