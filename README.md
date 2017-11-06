@@ -1,6 +1,6 @@
 # cwru_davinci_playfile
 
-[![build_status](https://travis-ci.com/cwru-robotics/cwru_davinci_playfile.svg?token=YmHMxBbcdppbMMkZWTut&branch=master)](https://travis-ci.com/cwru-robotics/cwru_davinci_playfiles)
+[![build_status](https://travis-ci.com/cwru-robotics/cwru_davinci_playfile.svg?token=YmHMxBbcdppbMMkZWTut&branch=master)](https://travis-ci.com/cwru-robotics/cwru_davinci_playfile)
 
 This package contains various utilities that can be used to log robotic motions from the [dvrk](https://github.com/cwru-robotics/cwru_davinci). The purpose of these utilities is to record, modify, and ultimately playback robotic motions. The individual executables are listed below.
 
