@@ -27,36 +27,17 @@
 
 void joint_format::read_line(const std::string & line, std::vector<double> & data)
 {
-  data.resize(43);
-  std::string joint_info("%lf, %lf, %lf, %lf, %lf, %lf, %lf, ");
-  std::string line_list;
-  // PSM1 recording 7 doubles, 3 times.
-  line_list += joint_info;
-  line_list += joint_info;
-  line_list += joint_info;
-  // PSM2 recording 7 doubles, 3 times.
-  line_list += joint_info;
-  line_list += joint_info;
-  line_list += joint_info;
-  line_list += std::string("%lf");
+  data.resize(15);
   int code = sscanf(
     line.c_str(),
-    line_list.c_str(),
-    &data[ 0], &data[ 1], &data[ 2], &data[ 3], &data[ 4], &data[ 5], &data[ 6],
-    &data[ 7], &data[ 8], &data[ 9], &data[10], &data[11], &data[12], &data[13],
-    &data[14], &data[15], &data[16], &data[17], &data[18], &data[19], &data[20],
-    &data[21], &data[22], &data[23], &data[24], &data[25], &data[26], &data[27],
-    &data[28], &data[29], &data[30], &data[31], &data[32], &data[33], &data[34],
-    &data[35], &data[36], &data[37], &data[38], &data[39], &data[40], &data[41],
-    &data[42]);
+    "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf,  %lf",
+    &data[0 ], &data[1 ], &data[2 ], &data[3 ], &data[4 ], &data[5 ], &data[6 ],
+    &data[7 ], &data[8 ], &data[9 ], &data[10], &data[11], &data[12], &data[13],
+    &data[14]);
 
-  if (code != 15 && code != 43)
+  if (code != 15)
   {
     throw code;
-  }
-  if (code == 15)
-  {
-    data.resize(15);
   }
 }
 
@@ -92,22 +73,31 @@ void joint_format::read_file(const std::string & package_name, const std::string
   std::vector<std::vector<double> > & data)
 {
   ROS_INFO("Package file location: %s/play/jsp/%s", package_name.c_str(), filename.c_str());
+
   std::string fullname = ros::package::getPath(package_name) + "/play/jsp/" + filename;
+
   read_file(fullname, data);
 }
 
 std::string joint_format::write_line(const std::vector<double> & data)
 {
-  if (data.size() != 43 && data.size() != 15)
+  if (data.size() != 15)
   {
     ROS_ERROR("Attempting to print malformed joint description of size %lu.", data.size());
   }
 
-  std::string accum;
-  for (int i = 0; i < (data.size()-1); i++)
+  std::string accum = "";
+  for (int i = 0; i < 6; i++)
   {
     accum = accum + std::to_string(data[i]) + ", ";
   }
-  accum = accum + std::to_string(data.back());
+  accum = accum + std::to_string(data[6]) + ",\t";
+  for (int i = 7; i < 13; i++)
+  {
+    accum = accum + std::to_string(data[i]) + ", ";
+  }
+  accum = accum + std::to_string(data[13]) + ",\t";
+  accum = accum + std::to_string(data[14]);
+
   return accum;
 }

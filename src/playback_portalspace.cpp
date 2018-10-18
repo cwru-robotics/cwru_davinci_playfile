@@ -75,15 +75,17 @@ int main(int argc, char **argv)
     des_gripper_affine.linear() = R;
     des_gripper_affine.translation() = tip_origin;
 
-    if (kin.ik_solve(des_gripper_affine) <= 0)
+    // if (kin.ik_solve(des_gripper_affine) <= 0)
+		if (kin.ik_solve(des_gripper_affine) <= 0)
     {
       ROS_ERROR("Line %d does not have a kinematic solution for PSM1!", i);
       // TODO(tes77) Abort pending resolution of kinematics issue.
-      // return 0;
+      return 0;
     }
 
-    davinci_kinematics::Vectorq7x1 solution = kin.get_soln();
-    for (int j = 0; j < 7; j++)
+    // davinci_kinematics::Vectorq7x1 solution = kin.get_soln();
+		davinci_kinematics::Vectorq7x1 solution = kin.get_soln();
+    for (int j = 0; j < 6; j++)
     {
       data[i][j] = solution[j];
     }
@@ -103,7 +105,7 @@ int main(int argc, char **argv)
     if (kin.ik_solve(des_gripper_affine) <= 0)
     {
       ROS_ERROR("Line %d does not have a kinematic solution for PSM2!", i);
-      // return 0;
+      return 0;
     }
 
     solution = kin.get_soln();
@@ -198,7 +200,7 @@ int main(int argc, char **argv)
     }*/
   }
 
-  /*std::cout << "positions:\n";
+  std::cout << "positions:\n";
   for(int i = 0; i < joint_trajectories_2.size(); i++){
     std::cout << "  ";
     for(int j = 0; j < 7; j++){
@@ -221,7 +223,31 @@ int main(int argc, char **argv)
     std::cout << "  ";
     std::cout << joint_trajectories_2[i].time_from_start;
     std::cout << "\n";
-  }*/
+  }
+std::cout << "positions:\n";
+  for(int i = 0; i < joint_trajectories_1.size(); i++){
+    std::cout << "  ";
+    for(int j = 0; j < 7; j++){
+      std::cout << joint_trajectories_1[i].positions[j] << " ";
+    }
+    std::cout << "\n";
+  }
+ 
+  std::cout << "\nvelocities:\n";
+  for(int i = 0; i < joint_trajectories_1.size(); i++){
+    std::cout << "  ";
+    for(int j = 0; j < 7; j++){
+      std::cout << joint_trajectories_1[i].velocities[j] << " ";
+    }
+    std::cout << "\n";
+  }
+  
+  std::cout << "\ntimes:\n";
+  for(int i = 0; i <joint_trajectories_1.size(); i++){
+    std::cout << "  ";
+    std::cout << joint_trajectories_1[i].time_from_start;
+    std::cout << "\n";
+  }
 
   // Publish the trajectories.
   psm_1.move_psm(joint_trajectories_1);

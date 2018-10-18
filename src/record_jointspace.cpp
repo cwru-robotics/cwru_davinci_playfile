@@ -93,26 +93,20 @@ int main(int argc, char **argv)
   psm_controller psm1(1, nh, true);
   psm_controller psm2(2, nh, true);
 
-  ROS_INFO("Ready to start capturing- enter '1' to begin.");
-  char ans = '0';
-  while (ans != '1' && ros::ok())
-  {
-    std::cin >> ans;
-  }
+//  ROS_INFO("Ready to start capturing- enter '1' to begin.");
+//  char ans = '0';
+//  while (ans != '1' && ros::ok())
+//  {
+//    std::cin >> ans;
+//    ROS_INFO("Record");
+//  }
 
   sensor_msgs::JointState pose_1, pose_2;
   std::vector<double> pose_both;
-
   psm1.get_fresh_psm_state(pose_1);
-  pose_both.insert(pose_both.end(), pose_1.position.begin(), pose_1.position.end());
-  pose_both.insert(pose_both.end(), pose_1.velocity.begin(), pose_1.velocity.end());
-  pose_both.insert(pose_both.end(), pose_1.effort.begin(), pose_1.effort.end());
-
   psm2.get_fresh_psm_state(pose_2);
+  pose_both.insert(pose_both.end(), pose_1.position.begin(), pose_1.position.end());
   pose_both.insert(pose_both.end(), pose_2.position.begin(), pose_2.position.end());
-  pose_both.insert(pose_both.end(), pose_2.velocity.begin(), pose_2.velocity.end());
-  pose_both.insert(pose_both.end(), pose_2.effort.begin(), pose_2.effort.end());
-
   pose_both.push_back(setup_time);
 
   outfile << joint_format::write_line(pose_both);
@@ -123,47 +117,27 @@ int main(int argc, char **argv)
 
   double total_time = 0.0;
   ros::Time starting = ros::Time::now();
-  ros::Time prev(starting);
   double start_time = starting.toSec();
-  ros::Duration sl(CAPTURE_PER);
   // TODO(rcj, tes) make the joint space recording reflect a real time operation.
-  bool ready_1(false);
-  bool ready_2(false);
   while (ros::ok() && (CAPTURE_TIME == -1.0 || total_time < CAPTURE_TIME))
   {
+    ros::Duration sl(CAPTURE_PER);
+
     ros::Time current = ros::Time::now();
 
-    if (psm1.get_psm_state(pose_1))
-    {
-      ready_1 = true;
-    }
-    if (psm2.get_psm_state(pose_2))
-    {
-      ready_2 = true;
-    }
-    ros::Duration dt = current-prev;
+    total_time = total_time + CAPTURE_PER;
 
-    if (ready_1 && ready_2 && dt > sl)
+    if (psm1.get_psm_state(pose_1) || psm2.get_psm_state(pose_2))
     {
       pose_both.clear();
-
       pose_both.insert(pose_both.end(), pose_1.position.begin(), pose_1.position.end());
-      pose_both.insert(pose_both.end(), pose_1.velocity.begin(), pose_1.velocity.end());
-      pose_both.insert(pose_both.end(), pose_1.effort.begin(), pose_1.effort.end());
-
       pose_both.insert(pose_both.end(), pose_2.position.begin(), pose_2.position.end());
-      pose_both.insert(pose_both.end(), pose_2.velocity.begin(), pose_2.velocity.end());
-      pose_both.insert(pose_both.end(), pose_2.effort.begin(), pose_2.effort.end());
-
       pose_both.push_back(setup_time + current.toSec() - start_time);
       outfile << "\n";
       outfile << joint_format::write_line(pose_both);
-
-      ready_1 = false;
-      ready_2 = false;
-      prev = current;
     }
     ros::spinOnce();
+    sl.sleep();
   }
   outfile.close();
   return 0;

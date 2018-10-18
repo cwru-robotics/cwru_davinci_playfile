@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(cwru_davinci_playfile)
 
-find_package(catkin REQUIRED COMPONENTS roscpp roslib roslint cwru_davinci_kinematics cwru_davinci_control)
+find_package(catkin REQUIRED COMPONENTS roscpp roslib roslint cwru_davinci_kinematics cwru_davinci_control uv_control)
 find_package(Boost REQUIRED COMPONENTS system thread)
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -9,7 +9,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 catkin_package(
 	INCLUDE_DIRS include ${catkin_INCLUDE_DIRS}
 	LIBRARIES playfile_format_joint playfile_format_cartesian actionlib 
-	CATKIN_DEPENDS roscpp roslib roslint
+	CATKIN_DEPENDS roscpp roslib roslint uv_control
 )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")

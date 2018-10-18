@@ -30,7 +30,7 @@ void cartesian_format::read_line(const std::string & line, std::vector<double> &
   std::string data_format;
   // add the string formats of the two PSM's
   data_format += "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, ";
-  data_format += "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, ";
+  data_format += "%lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf, %lf";
   data.resize(21);
 
   int code = sscanf(
