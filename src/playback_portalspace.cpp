@@ -24,7 +24,7 @@
 #include <sensor_msgs/JointState.h>
 
 #include <cwru_davinci_kinematics/davinci_inv_kinematics.h>
-#include <cwru_davinci_control/psm_controller.h>
+#include <cwru_davinci/uv_control/psm_interface.h>
 #include <cwru_davinci_playfile/playfile_format_cartesian.h>
 
 int main(int argc, char **argv)
@@ -118,14 +118,14 @@ int main(int argc, char **argv)
   // Set up our node.
   ros::init(argc, argv, "playback_portal");
   ros::NodeHandle nh;
-  psm_controller psm_1(1, nh);
-  psm_controller psm_2(2, nh);
+  psm_interface psm_1(1, nh);
+  psm_interface psm_2(2, nh);
 
   // Grab the current position, which will be turned into the first point in the trajectory.
   sensor_msgs::JointState js_1;
   sensor_msgs::JointState js_2;
-  psm_1.get_fresh_psm_state(js_1);
-  psm_2.get_fresh_psm_state(js_2);
+  psm_1.get_fresh_position(js_1);
+  psm_2.get_fresh_position(js_2);
 
   std::vector<trajectory_msgs::JointTrajectoryPoint>
   joint_trajectories_1(std::vector<trajectory_msgs::JointTrajectoryPoint>(data.size() + 1));
@@ -133,10 +133,10 @@ int main(int argc, char **argv)
   std::vector<trajectory_msgs::JointTrajectoryPoint>
     joint_trajectories_2(std::vector<trajectory_msgs::JointTrajectoryPoint>(data.size() + 1));
 
-  joint_trajectories_1[0].time_from_start = ros::Duration(0.0);
+  joint_trajectories_1[0].time_from_start = ros::Duration(0.01);
   joint_trajectories_1[0].velocities = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   joint_trajectories_1[0].positions = js_1.position;
-  joint_trajectories_2[0].time_from_start = ros::Duration(0.0);
+  joint_trajectories_2[0].time_from_start = ros::Duration(0.01);
   joint_trajectories_2[0].velocities = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
   joint_trajectories_2[0].positions = js_2.position;
 
@@ -250,8 +250,30 @@ std::cout << "positions:\n";
   }
 
   // Publish the trajectories.
-  psm_1.move_psm(joint_trajectories_1);
-  psm_2.move_psm(joint_trajectories_2);
+  control_msgs::FollowJointTrajectoryGoal g1;
+  control_msgs::FollowJointTrajectoryGoal g2;
+  g1.trajectory.points = joint_trajectories_1;
+  g2.trajectory.points = joint_trajectories_2;
+  g1.trajectory.joint_names = {
+		"PSM1_outer_yaw",
+		"PSM1_outer_pitch",
+		"PSM1_outer_insertion",
+		"PSM1_outer_roll",
+		"PSM1_outer_wrist_pitch",
+		"PSM1_outer_wrist_yaw",
+		"PSM1_jaw"
+  };
+  g2.trajectory.joint_names = {
+		"PSM2_outer_yaw",
+		"PSM2_outer_pitch",
+		"PSM2_outer_insertion",
+		"PSM2_outer_roll",
+		"PSM2_outer_wrist_pitch",
+		"PSM2_outer_wrist_yaw",
+		"PSM2_jaw"
+  };
+  psm_1.execute_trajectory(g1);
+  psm_2.execute_trajectory(g2);
 
   return 0;
 }
